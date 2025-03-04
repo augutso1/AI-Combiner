@@ -1,6 +1,6 @@
 # AI Response Combiner Prototype
 
-A FastAPI-based system that takes a user prompt, queries multiple AI models (one paid mock, one local free model, and one free mock), and combines their responses into a single output. Built for a MacBook Pro M1 Pro (16GB RAM, Apple Silicon with MPS support).
+A FastAPI-based system that takes a user prompt, queries multiple AI models (one paid mock, one local free model, and one free mock), and combines their responses into a single output. Built with MPS support.
 
 ## Features
 
@@ -14,9 +14,7 @@ A FastAPI-based system that takes a user prompt, queries multiple AI models (one
 
 ## Setup Instructions (macOS)
 
-1. **Install Python 3.9+**:
-
-   - Use Homebrew: `brew install python`
+1. **Install Python 3.9+**
 
 2. **Create a Virtual Environment**:
 
