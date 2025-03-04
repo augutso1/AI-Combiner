@@ -45,18 +45,18 @@ curl -X POST "http://localhost:8000/generate" -H "Content-Type: application/json
 ```
 
 **How It Works**
-The system queries three sources:
-A mocked OpenAI response (static text).
-GPT-2 running locally (small free model, 124M parameters).
-A mocked second free model (static text).
-Responses are combined with "and" and returned as JSON.
-Current Limitations
-Free Models Only: Using GPT-2 and mocks limits output quality. Paid models or larger free models could enhance results, but:
-Paid APIs (e.g., OpenAI) require keys I don’t have.
-Larger models (e.g., Mistral-7B) exceed my 16GB RAM.
-Simple Combiner: The "and" concatenation isn’t smart—it just glues responses together, making them hard to read.
-Progress Stalled: Without access to better models or more hardware, I can’t refine this further.
-Future Improvements (Blocked)
-Replace mocks with real APIs (needs funding/keys).
-Use a smarter combiner (e.g., summarizer model, needs more RAM or fine-tuning).
-Upgrade to a bigger model (needs >16GB RAM or cloud resources).
+The system queries three sources:  
+A mocked OpenAI response (static text).  
+GPT-2 running locally (small free model, 124M parameters).  
+A mocked second free model (static text).  
+Responses are combined with "and" and returned as JSON.  
+Current Limitations  
+Free Models Only: Using GPT-2 and mocks limits output quality. Paid models or larger free models could enhance results, but:  
+Paid APIs (e.g., OpenAI) require keys I don’t have.  
+Larger models (e.g., Mistral-7B) exceed my 16GB RAM.  
+Simple Combiner: The "and" concatenation isn’t smart—it just glues responses together, making them hard to read.  
+Progress Stalled: Without access to better models or more hardware, I can’t refine this further.  
+Future Improvements (Blocked)  
+Replace mocks with real APIs (needs funding/keys).  
+Use a smarter combiner (e.g., summarizer model, needs more RAM or fine-tuning).  
+Upgrade to a bigger model (needs >16GB RAM or cloud resources).  
