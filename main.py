@@ -84,4 +84,4 @@ tokenizer = GPT2Tokenizer.from_pretrained("distilgpt2")
 model = GPT2LMHeadModel.from_pretrained("distilgpt2")
 print("Model loaded successfully")
 
-##testint cody Cli
+##testing codyCLI AI to generate commits automatically
