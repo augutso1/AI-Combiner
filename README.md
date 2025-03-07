@@ -1,64 +1,112 @@
-# AI Response Combiner Prototype
+# AI Response Combiner
 
-A FastAPI-based system that takes a user prompt, queries multiple AI models (one paid mock, one local free model, and one free mock), and combines their responses into a single output. Built for a MacBook Pro M1 Pro (16GB RAM, Apple Silicon with MPS support).
+A FastAPI-based system that combines responses from multiple powerful AI models through API calls to Groq's API. The system supports various state-of-the-art models and includes a web interface for easy interaction.
 
 ## Features
 
-- **Input**: Accepts a prompt via a FastAPI endpoint, with an optional OpenAI API key.
-- **Models**:
-  - Mock OpenAI (placeholder for a paid model).
-  - Local GPT-2 (free, runs on-device with MPS acceleration).
-  - Mock second free model (hardcoded response).
-- **Output**: Combines responses with a simple "and" separator, returned as JSON.
-- **Limitations**: Progress is stalled due to reliance on free models. Real paid models (e.g., OpenAI) or larger free models (e.g., Mistral-7B) could improve output quality, but they require API keys or more memory than available.
+- **Input**: Accepts a prompt via a FastAPI endpoint or web interface
+- **Supported Models**:
+  - Llama 3.3 70B Versatile
+  - Whisper Large V3 Turbo
+  - Gemma 2 9B
+  - Mixtral 8x7B (32768 context)
+  - Distil Whisper Large V3
+- **Output**: Combines responses from multiple models with proper attribution
+- **Web Interface**: Simple HTML/CSS/JS interface for interacting with the API
+- **API Endpoint**: RESTful API for programmatic access
 
-## Setup Instructions (macOS)
+## Setup Instructions
 
 1. **Install Python 3.9+**:
 
-   - Use Homebrew: `brew install python`
+   ```bash
+   brew install python  # On macOS
+   ```
 
 2. **Create a Virtual Environment**:
 
    ```bash
    python3 -m venv venv
    source venv/bin/activate
-
    ```
 
-3. **Install Dependencies**
+3. **Install Dependencies**:
 
-```bash
-pip install torch torchvision  # MPS-enabled PyTorch for Apple Silicon
-pip install transformers requests fastapi uvicorn pydantic
+   ```bash
+   pip install fastapi uvicorn requests pydantic transformers torch
+   ```
+
+4. **Configuration**:
+
+   - Create a `.env` file with your Groq API key:
+     ```
+     GROQ_API_KEY=your_api_key_here
+     ```
+
+5. **Run the Application**:
+
+   ```bash
+   python main.py
+   ```
+
+6. **Access the Web Interface**:
+   ```
+   http://localhost:8000/static/index.html
+   ```
+
+## API Usage
+
+Send a POST request to `/generate` with the following JSON body:
+
+```json
+{
+  "prompt": "Your question or prompt here",
+  "api_key": "your_api_key_here",
+  "models": ["llama-3.3-70b-versatile", "mixtral-8x7b-32768"] // Optional - will use default models if not specified
+}
 ```
 
-4. **Run the Application**
+Example using curl:
 
 ```bash
-python main.py
+curl -X POST "http://localhost:8000/generate" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "Explain quantum computing",
+    "api_key": "your_api_key_here"
+  }'
 ```
 
-5. **Test the Endpoint:**
-   Use curl or Postman:
+## Web Interface
 
-```bash
-curl -X POST "http://localhost:8000/generate" -H "Content-Type: application/json" -d '{"prompt": "Tell me about AI", "openai_key": null}'
-```
+The application includes a simple web interface that allows you to:
 
-**How It Works**
-The system queries three sources:
-A mocked OpenAI response (static text).
-GPT-2 running locally (small free model, 124M parameters).
-A mocked second free model (static text).
-Responses are combined with "and" and returned as JSON.
-Current Limitations
-Free Models Only: Using GPT-2 and mocks limits output quality. Paid models or larger free models could enhance results, but:
-Paid APIs (e.g., OpenAI) require keys I don’t have.
-Larger models (e.g., Mistral-7B) exceed my 16GB RAM.
-Simple Combiner: The "and" concatenation isn’t smart—it just glues responses together, making them hard to read.
-Progress Stalled: Without access to better models or more hardware, I can’t refine this further.
-Future Improvements (Blocked)
-Replace mocks with real APIs (needs funding/keys).
-Use a smarter combiner (e.g., summarizer model, needs more RAM or fine-tuning).
-Upgrade to a bigger model (needs >16GB RAM or cloud resources).
+- Enter your prompt
+- Select one or multiple AI models
+- View the combined response
+
+To use the web interface, simply open `http://localhost:8000/static/index.html` in your browser after starting the application.
+
+## Response Format
+
+The API returns a combined response that includes the best answer from the selected models. The combination algorithm currently selects the most detailed response.
+
+## Error Handling
+
+The system includes robust error handling for:
+
+- API authentication issues
+- Model-specific errors
+- Rate limiting
+- Network connectivity problems
+
+Each error is properly logged and returned with appropriate HTTP status codes.
+
+## Future Improvements
+
+- Implement more sophisticated response combination algorithms
+- Add streaming support for real-time responses
+- Implement response caching for frequently asked questions
+- Add model-specific parameter tuning
+- Implement fallback mechanisms for model unavailability
+- Enhance the web interface with additional features
