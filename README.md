@@ -1,112 +1,133 @@
 # AI Response Combiner
 
-A FastAPI-based system that combines responses from multiple powerful AI models through API calls to Groq's API. The system supports various state-of-the-art models and includes a web interface for easy interaction.
+Um sistema que combina respostas de múltiplos modelos de IA poderosos através de chamadas API para o serviço Groq. Suporta diversos modelos de última geração e inclui tanto uma interface web quanto uma interface de linha de comando para fácil interação.
 
-## Features
+## Funcionalidades
 
-- **Input**: Accepts a prompt via a FastAPI endpoint or web interface
-- **Supported Models**:
-  - Llama 3.3 70B Versatile
-  - Whisper Large V3 Turbo
+- **Modo Web API**: API FastAPI com endpoint REST e interface web
+- **Modo Terminal**: Interface de linha de comando para interação direta
+- **Modelos Suportados**:
+  - Llama 3.3 70B (8192 contexto)
+  - Llama 3 8B (8192 contexto)
   - Gemma 2 9B
-  - Mixtral 8x7B (32768 context)
+  - Whisper Large V3 Turbo
   - Distil Whisper Large V3
-- **Output**: Combines responses from multiple models with proper attribution
-- **Web Interface**: Simple HTML/CSS/JS interface for interacting with the API
-- **API Endpoint**: RESTful API for programmatic access
+- **Método de Combinação**: Pipeline LCEL (LangChain Expression Language) com múltiplos ciclos de aprimoramento
+- **Memória de Conversação**: Mantém o contexto das interações anteriores
+- **Interface Web**: Interface HTML/CSS/JS simples para interagir com a API
+- **Interface de Linha de Comando**: Modo interativo para consultas diretas via terminal
 
-## Setup Instructions
+## Arquitetura
 
-1. **Install Python 3.9+**:
+O projeto está estruturado em dois módulos principais:
+
+- **main.py**: Implementação da API FastAPI para uso via web
+- **mixture.py**: Implementação da interface de linha de comando e do sistema de combinação de agentes via LangChain
+
+## Instruções de Configuração
+
+1. **Instalar Python 3.9+**:
 
    ```bash
-   brew install python  # On macOS
+   brew install python  # No macOS
    ```
 
-2. **Create a Virtual Environment**:
+2. **Criar um Ambiente Virtual**:
 
    ```bash
    python3 -m venv venv
    source venv/bin/activate
    ```
 
-3. **Install Dependencies**:
+3. **Instalar Dependências**:
 
    ```bash
-   pip install fastapi uvicorn requests pydantic transformers torch
+   pip install fastapi uvicorn langchain langchain-groq nest_asyncio pydantic
    ```
 
-4. **Configuration**:
+4. **Configuração**:
 
-   - Create a `.env` file with your Groq API key:
+   - Configure sua chave de API Groq diretamente no arquivo mixture.py ou main.py:
+     ```python
+     os.environ["GROQ_API_KEY"] = "sua_chave_api_aqui"
      ```
-     GROQ_API_KEY=your_api_key_here
+   - Ou crie um arquivo `.env` com sua chave:
+     ```
+     GROQ_API_KEY=sua_chave_api_aqui
      ```
 
-5. **Run the Application**:
+## Execução da Aplicação
 
-   ```bash
-   python main.py
-   ```
+### Modo Linha de Comando
 
-6. **Access the Web Interface**:
-   ```
-   http://localhost:8000/static/index.html
-   ```
+```bash
+python mixture.py
+```
 
-## API Usage
+Você verá um prompt interativo onde pode fazer perguntas diretamente ao sistema combinado de modelos.
 
-Send a POST request to `/generate` with the following JSON body:
+### Modo Servidor Web
+
+```bash
+python main.py
+```
+
+Acesse a interface web em:
+
+```
+http://localhost:8000/static/index.html
+```
+
+## Uso da API
+
+Envie uma requisição POST para `/generate` com o seguinte corpo JSON:
 
 ```json
 {
-  "prompt": "Your question or prompt here",
-  "api_key": "your_api_key_here",
-  "models": ["llama-3.3-70b-versatile", "mixtral-8x7b-32768"] // Optional - will use default models if not specified
+  "prompt": "Sua pergunta ou instrução aqui",
+  "api_key": "sua_chave_api_aqui",
+  "models": ["llama-3.3-70b-versatile", "llama3-8b-8192"] // Opcional - usará modelos padrão se não especificado
 }
 ```
 
-Example using curl:
+Exemplo usando curl:
 
 ```bash
 curl -X POST "http://localhost:8000/generate" \
   -H "Content-Type: application/json" \
   -d '{
-    "prompt": "Explain quantum computing",
-    "api_key": "your_api_key_here"
+    "prompt": "Explique computação quântica",
+    "api_key": "sua_chave_api_aqui"
   }'
 ```
 
-## Web Interface
+## Funcionamento do Sistema de Combinação (mixture.py)
 
-The application includes a simple web interface that allows you to:
+O sistema utiliza a abordagem LCEL (LangChain Expression Language) para criar um pipeline de agentes que:
 
-- Enter your prompt
-- Select one or multiple AI models
-- View the combined response
+1. Processa a entrada do usuário através de vários modelos de IA em paralelo
+2. Combina as respostas iniciais em um formato estruturado
+3. Usa esse resultado como contexto para um modelo principal gerar a resposta final
+4. Mantém o histórico da conversa para contextualização
 
-To use the web interface, simply open `http://localhost:8000/static/index.html` in your browser after starting the application.
+O sistema executa até 3 ciclos de refinamento para cada consulta, melhorando progressivamente a qualidade da resposta.
 
-## Response Format
+## Tratamento de Erros
 
-The API returns a combined response that includes the best answer from the selected models. The combination algorithm currently selects the most detailed response.
+O sistema inclui tratamento robusto de erros para:
 
-## Error Handling
+- Problemas de autenticação com a API
+- Erros específicos de cada modelo
+- Limitação de taxa (rate limiting)
+- Problemas de conectividade de rede
 
-The system includes robust error handling for:
+Cada erro é devidamente registrado e retornado com códigos de status HTTP apropriados.
 
-- API authentication issues
-- Model-specific errors
-- Rate limiting
-- Network connectivity problems
+## Melhorias Futuras
 
-Each error is properly logged and returned with appropriate HTTP status codes.
-
-## Future Improvements
-
-- Implement more sophisticated response combination algorithms
-- Add streaming support for real-time responses
-- Implement response caching for frequently asked questions
-- Add model-specific parameter tuning
-- Implement fallback mechanisms for model unavailability
-- Enhance the web interface with additional features
+- Implementar algoritmos mais sofisticados de combinação de respostas
+- Adicionar suporte a streaming para respostas em tempo real
+- Implementar cache de respostas para perguntas frequentes
+- Adicionar ajuste de parâmetros específicos para cada modelo
+- Implementar mecanismos de fallback para indisponibilidade de modelos
+- Aprimorar a interface web com recursos adicionais

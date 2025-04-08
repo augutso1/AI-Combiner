@@ -1,29 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Model Interface</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>AI Combiner Interface</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div class="container">
-        <h1>AI Model Interface</h1>
-        
+        <h1>AI Combiner Interface</h1>
         <textarea id="prompt" placeholder="Enter your prompt..."></textarea>
-        
+
         <select id="model" multiple>
             <option value="llama-3.3-70b-versatile">LLaMA 70B</option>
-            <option value="mixtral-8x7b-32768">Mixtral</option>
+            <option value="llama3-8b-8192">LLaMA 8B</option>
             <option value="gemma2-9b-it">Gemma 9B</option>
             <option value="whisper-large-v3-turbo">Whisper Large</option>
         </select>
         <p>Select multiple models by holding Ctrl (Windows) or Cmd (Mac)</p>
-        
 
         <button id="generateBtn">Generate</button>
 
-        <div id="loading" class="hidden">Generating...</div>
+        <div id="loading" class="hidden">Generating response... This might take a few moments.</div>
 
         <div id="responseContainer">
             <strong>Response:</strong>
@@ -33,4 +33,5 @@
 
     <script src="script.js"></script>
 </body>
+
 </html>
