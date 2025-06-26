@@ -1,145 +1,134 @@
 # AI Response Combiner
 
-Um sistema que combina respostas de múltiplos modelos de IA poderosos através de chamadas API para o serviço Groq. Suporta diversos modelos de última geração e inclui tanto uma interface web quanto uma interface de linha de comando para fácil interação.
+A system that unites replies from multiple powerful AI models via API calls to the Groq service. It supports various cutting-edge models and includes both a web interface and a command-line interface for effortless interaction.
 
-## Funcionalidades
+## Features
 
-- **Modo Web API**: API FastAPI com endpoint REST e interface web
-- **Modo Terminal**: Interface de linha de comando para interação direta
-- **Modelos Suportados**:
-  - Llama 4 Maverick 17B (Instruct)
-  - Llama 3.3 70B Versatile
-  - Llama 3 70B (8192 contexto)
-  - DeepSeek R1 Distill Llama 70B
-  - Gemma 2 9B IT
-  - Llama 4 Scout 17B (Instruct)
-  - Qwen 3 32B
-- **Método de Combinação**: Pipeline LCEL (LangChain Expression Language) com múltiplos ciclos de aprimoramento
-- **Memória de Conversação**: Mantém o contexto das interações anteriores
-- **Interface Web**: Interface HTML/CSS/JS simples para interagir com a API
-- **Interface de Linha de Comando**: Modo interativo para consultas diretas via terminal
+  - **Web API Mode**: FastAPI API with a REST endpoint and web interface
+  - **Terminal Mode**: Command-line interface for direct interaction
+  - **Supported Models**:
+      - Llama 4 Maverick 17B (Instruct)
+      - Llama 3.3 70B Versatile
+      - Llama 3 70B (8192 context)
+      - DeepSeek R1 Distill Llama 70B
+      - Gemma 2 9B IT
+      - Llama 4 Scout 17B (Instruct)
+      - Qwen 3 32B
+  - **Combination Method**: LCEL (LangChain Expression Language) pipeline with multiple refinement cycles
+  - **Conversation Memory**: Upholds the context of prior interactions
+  - **Web Interface**: Simple HTML/CSS/JS interface for interacting with the API
+  - **Command-Line Interface**: Interactive mode for direct queries via terminal
 
-## Arquitetura
+## Architecture
 
-O projeto está estruturado em dois módulos principais:
+The project is structured into two chief modules:
 
 ### Backend
 
-- **api/**: Rotas e endpoints da API
-- **schemas/**: Modelos de dados e validação
-- **services/**: Lógica de negócio e combinação de modelos
-- **main.py**: Servidor FastAPI e CLI
+  - **api/**: API routes and endpoints
+  - **schemas/**: Data models and validation
+  - **services/**: Business logic and model combination
+  - **main.py**: FastAPI server and CLI
 
 ### Frontend
 
-- **index.html**: Interface web principal
-- **script.js**: Lógica de interação com a API
-- **style.css**: Estilização da interface
+  - **index.html**: Primary web interface
+  - **script.js**: Logic for interacting with the API
+  - **style.css**: Interface styling
 
-## Instruções de Configuração
+## Configuration Instructions
 
-1. **Instalar Python 3.9+**:
+1.  **Install Python 3.9+**:
 
-   ```bash
-   brew install python  # No macOS
-   ```
+   `bash    brew install python  # On macOS    `
 
-2. **Criar um Ambiente Virtual**:
+2.  **Create a Virtual Environment**:
 
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
+   `bash    python3 -m venv venv    source venv/bin/activate    `
 
-3. **Instalar Dependências**:
+3.  **Install Dependencies**:
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+   `bash    pip install -r requirements.txt    `
 
-4. **Configuração**:
+4.  **Configuration**:
 
-   - Configure sua chave de API Groq através de variável de ambiente:
-     ```bash
-     export GROQ_API_KEY="sua_chave_api_aqui"
-     ```
-   - Ou crie um arquivo `.env` com sua chave:
-     ```
-     GROQ_API_KEY=sua_chave_api_aqui
-     ```
+   - Configure your Groq API key via environment variable:
+     `bash      export GROQ_API_KEY="your_api_key_here"      `
+   - Or forge a `.env` file with your key:
+     `       GROQ_API_KEY=your_api_key_here       `
 
-## Execução da Aplicação
+## Application Execution
 
-### Modo Linha de Comando
+### Command-Line Mode
 
 ```bash
 python -m backend.main --cli
 ```
 
-Você verá um prompt interativo onde pode fazer perguntas diretamente ao sistema combinado de modelos.
+You'll behold an interactive prompt where you can pose inquiries directly to the combined model system.
 
-### Modo Servidor Web
+### Web Server Mode
 
 ```bash
 python -m backend.main
 ```
 
-Acesse a interface web em:
+Access the web interface at:
 
 ```
 http://localhost:8000
 ```
 
-## Uso da API
+## API Usage
 
-Envie uma requisição POST para `/api/generate` com o seguinte corpo JSON:
+Dispatch a POST request to `/api/generate` with the following JSON body:
 
 ```json
 {
-  "prompt": "Sua pergunta ou instrução aqui",
-  "api_key": "sua_chave_api_aqui",
-  "models": ["llama-4-maverick-17b", "gemma2-9b-it"] // Opcional - usará modelos padrão se não especificado
+  "prompt": "Your inquiry or instruction here",
+  "api_key": "your_api_key_here",
+  "models": ["llama-4-maverick-17b", "gemma2-9b-it"] // Optional - will employ default models if not specified
 }
 ```
 
-Exemplo usando curl:
+Instance using curl:
 
 ```bash
 curl -X POST "http://localhost:8000/api/generate" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "prompt": "Explique computação quântica",
-    "api_key": "sua_chave_api_aqui"
-  }'
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "Expound on quantum computing",
+    "api_key": "your_api_key_here"
+  }'
 ```
 
-## Funcionamento do Sistema de Combinação
+## How the Combination System Operates
 
-O sistema utiliza a abordagem LCEL (LangChain Expression Language) para criar um pipeline de agentes que:
+The system harnesses the LCEL (LangChain Expression Language) approach to craft an agent pipeline that:
 
-1. Processa a entrada do usuário através de vários modelos de IA em paralelo
-2. Combina as respostas iniciais em um formato estruturado
-3. Usa esse resultado como contexto para um modelo principal gerar a resposta final
-4. Mantém o histórico da conversa para contextualização
+1.  Processes user input through various AI models in parallel
+2.  Merges the initial replies into a structured format
+3.  Utilizes this outcome as context for a chief model to forge the ultimate response
+4.  Sustains conversation history for contextualization
 
-O sistema executa até 3 ciclos de refinamento para cada consulta, melhorando progressivamente a qualidade da resposta.
+The system performs up to 3 cycles of refinement for each query, progressively ameliorating the response quality.
 
-## Tratamento de Erros
+## Error Handling
 
-O sistema inclui tratamento robusto de erros para:
+The system encompasses robust error management for:
 
-- Problemas de autenticação com a API
-- Erros específicos de cada modelo
-- Limitação de taxa (rate limiting)
-- Problemas de conectividade de rede
+  - Authentication issues with the API
+  - Model-specific errors
+  - Rate limiting
+  - Network connectivity woes
 
-Cada erro é devidamente registrado e retornado com códigos de status HTTP apropriados.
+Each error is properly logged and returned with appropriate HTTP status codes.
 
-## Melhorias Futuras
+## Future Enhancements
 
-- Implementar algoritmos mais sofisticados de combinação de respostas
-- Adicionar suporte a streaming para respostas em tempo real
-- Implementar cache de respostas para perguntas frequentes
-- Adicionar ajuste de parâmetros específicos para cada modelo
-- Implementar mecanismos de fallback para indisponibilidade de modelos
-- Aprimorar a interface web com recursos adicionais
+  - Implement more sophisticated response combination algorithms
+  - Append streaming support for real-time replies
+  - Institute response caching for frequent inquiries
+  - Incorporate parameter tuning specific to each model
+  - Deploy fallback mechanisms for model unavailability
+  - Improve the web interface with additional functionalities
