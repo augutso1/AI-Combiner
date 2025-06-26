@@ -7,11 +7,13 @@ Um sistema que combina respostas de múltiplos modelos de IA poderosos através 
 - **Modo Web API**: API FastAPI com endpoint REST e interface web
 - **Modo Terminal**: Interface de linha de comando para interação direta
 - **Modelos Suportados**:
-  - Llama 3.3 70B (8192 contexto)
-  - Llama 3 8B (8192 contexto)
-  - Gemma 2 9B
-  - Whisper Large V3 Turbo
-  - Distil Whisper Large V3
+  - Llama 4 Maverick 17B (Instruct)
+  - Llama 3.3 70B Versatile
+  - Llama 3 70B (8192 contexto)
+  - DeepSeek R1 Distill Llama 70B
+  - Gemma 2 9B IT
+  - Llama 4 Scout 17B (Instruct)
+  - Qwen 3 32B
 - **Método de Combinação**: Pipeline LCEL (LangChain Expression Language) com múltiplos ciclos de aprimoramento
 - **Memória de Conversação**: Mantém o contexto das interações anteriores
 - **Interface Web**: Interface HTML/CSS/JS simples para interagir com a API
@@ -21,8 +23,18 @@ Um sistema que combina respostas de múltiplos modelos de IA poderosos através 
 
 O projeto está estruturado em dois módulos principais:
 
-- **main.py**: Implementação da API FastAPI para uso via web
-- **mixture.py**: Implementação da interface de linha de comando e do sistema de combinação de agentes via LangChain
+### Backend
+
+- **api/**: Rotas e endpoints da API
+- **schemas/**: Modelos de dados e validação
+- **services/**: Lógica de negócio e combinação de modelos
+- **main.py**: Servidor FastAPI e CLI
+
+### Frontend
+
+- **index.html**: Interface web principal
+- **script.js**: Lógica de interação com a API
+- **style.css**: Estilização da interface
 
 ## Instruções de Configuração
 
@@ -42,14 +54,14 @@ O projeto está estruturado em dois módulos principais:
 3. **Instalar Dependências**:
 
    ```bash
-   pip install fastapi uvicorn langchain langchain-groq nest_asyncio pydantic
+   pip install -r requirements.txt
    ```
 
 4. **Configuração**:
 
-   - Configure sua chave de API Groq diretamente no arquivo mixture.py ou main.py:
-     ```python
-     os.environ["GROQ_API_KEY"] = "sua_chave_api_aqui"
+   - Configure sua chave de API Groq através de variável de ambiente:
+     ```bash
+     export GROQ_API_KEY="sua_chave_api_aqui"
      ```
    - Ou crie um arquivo `.env` com sua chave:
      ```
@@ -61,7 +73,7 @@ O projeto está estruturado em dois módulos principais:
 ### Modo Linha de Comando
 
 ```bash
-python mixture.py
+python -m backend.main --cli
 ```
 
 Você verá um prompt interativo onde pode fazer perguntas diretamente ao sistema combinado de modelos.
@@ -69,31 +81,31 @@ Você verá um prompt interativo onde pode fazer perguntas diretamente ao sistem
 ### Modo Servidor Web
 
 ```bash
-python main.py
+python -m backend.main
 ```
 
 Acesse a interface web em:
 
 ```
-http://localhost:8000/static/index.html
+http://localhost:8000
 ```
 
 ## Uso da API
 
-Envie uma requisição POST para `/generate` com o seguinte corpo JSON:
+Envie uma requisição POST para `/api/generate` com o seguinte corpo JSON:
 
 ```json
 {
   "prompt": "Sua pergunta ou instrução aqui",
   "api_key": "sua_chave_api_aqui",
-  "models": ["llama-3.3-70b-versatile", "llama3-8b-8192"] // Opcional - usará modelos padrão se não especificado
+  "models": ["llama-4-maverick-17b", "gemma2-9b-it"] // Opcional - usará modelos padrão se não especificado
 }
 ```
 
 Exemplo usando curl:
 
 ```bash
-curl -X POST "http://localhost:8000/generate" \
+curl -X POST "http://localhost:8000/api/generate" \
   -H "Content-Type: application/json" \
   -d '{
     "prompt": "Explique computação quântica",
@@ -101,7 +113,7 @@ curl -X POST "http://localhost:8000/generate" \
   }'
 ```
 
-## Funcionamento do Sistema de Combinação (mixture.py)
+## Funcionamento do Sistema de Combinação
 
 O sistema utiliza a abordagem LCEL (LangChain Expression Language) para criar um pipeline de agentes que:
 
